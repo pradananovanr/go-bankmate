@@ -2,9 +2,9 @@ package delivery
 
 import (
 	"fmt"
-	"go-paybro/config"
-	"go-paybro/controller"
-	"go-paybro/manager"
+	"go-bankmate/config"
+	"go-bankmate/controller"
+	"go-bankmate/manager"
 	"log"
 
 	"github.com/gin-gonic/gin"

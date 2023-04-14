@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"go-paybro/model/dto/res"
+	"go-bankmate/model/dto/res"
 
 	"github.com/gin-gonic/gin"
 )

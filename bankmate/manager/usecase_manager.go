@@ -1,6 +1,6 @@
 package manager
 
-import "go-paybro/usecase"
+import "go-bankmate/usecase"
 
 type UsecaseManager interface {
 	CustomerUsecase() usecase.CustomerUsecase

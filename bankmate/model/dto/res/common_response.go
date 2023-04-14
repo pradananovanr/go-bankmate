@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"go-paybro/model/app_error"
+	"go-bankmate/model/app_error"
 )
 
 const (

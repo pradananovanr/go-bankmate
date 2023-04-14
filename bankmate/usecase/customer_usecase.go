@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"go-paybro/model/entity"
-	"go-paybro/repository"
+	"go-bankmate/model/entity"
+	"go-bankmate/repository"
 )
 
 type CustomerUsecase interface {

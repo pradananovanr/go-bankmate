@@ -9,8 +9,8 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"go-paybro/model/entity"
-	"go-paybro/util"
+	"go-bankmate/model/entity"
+	"go-bankmate/util"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
@@ -143,7 +143,7 @@ func (r *customerRepo) UpdateToken(id int) error {
 	}
 
 	if rowsAffected == 0 {
-		return fmt.Errorf("customer with id %d not found", id)
+		return fmt.Errorf("token for customer with id %d not found", id)
 	}
 
 	return nil
@@ -165,7 +165,7 @@ func (r *customerRepo) InsertToken(id int, token string) error {
 	}
 
 	if rowsAffected == 0 {
-		return fmt.Errorf("customer with id %d not found", id)
+		return fmt.Errorf("error insert")
 	}
 
 	return nil

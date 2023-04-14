@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"go-paybro/config"
+	"go-bankmate/config"
 )
 
 type InfraManager interface {

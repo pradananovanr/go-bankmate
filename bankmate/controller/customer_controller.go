@@ -2,11 +2,11 @@ package controller
 
 import (
 	"fmt"
-	"go-paybro/middlewares"
-	"go-paybro/model/app_error"
-	"go-paybro/model/entity"
-	"go-paybro/usecase"
-	"go-paybro/util"
+	"go-bankmate/middlewares"
+	"go-bankmate/model/app_error"
+	"go-bankmate/model/entity"
+	"go-bankmate/usecase"
+	"go-bankmate/util"
 	"net/http"
 	"strconv"
 

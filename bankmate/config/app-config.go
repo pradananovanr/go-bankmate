@@ -6,7 +6,7 @@
 
 package config
 
-import "go-paybro/util"
+import "go-bankmate/util"
 
 type APIConfig struct {
 	ApiPort string

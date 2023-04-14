@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"go-paybro/util"
+	"go-bankmate/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

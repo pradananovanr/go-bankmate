@@ -1,4 +1,4 @@
-module go-paybro
+module go-bankmate
 
 go 1.20
 

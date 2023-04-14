@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-paybro/delivery"
+	"go-bankmate/delivery"
 
 	_ "github.com/lib/pq"
 )

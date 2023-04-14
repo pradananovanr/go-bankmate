@@ -1,6 +1,6 @@
 package manager
 
-import "go-paybro/repository"
+import "go-bankmate/repository"
 
 type RepoManager interface {
 	CustomerRepo() repository.CustomerRepo
