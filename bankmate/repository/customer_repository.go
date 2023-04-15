@@ -8,6 +8,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"go-bankmate/model/entity"
 	"go-bankmate/util"
@@ -18,23 +19,19 @@ import (
 
 type CustomerRepo interface {
 	Create(newCustomer *entity.Customer) (entity.Customer, error)
-	Delete(id int) error
+	Delete(id_customer int) error
 	Login(username, password string) (string, error)
-	Logout(id int) error
-	InsertToken(id int, token string) error
-	UpdateToken(id int) error
-	AuthToken(token string) error
+	Logout(id_customer int) error
+	InsertToken(id_customer int, token string) error
+	UpdateToken(id_customer int) error
+	ValidateToken(id_customer int, token string) error
 }
 
 type customerRepo struct {
 	db *sql.DB
 }
 
-func VerifyPassword(password, hashedPassword string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-}
-
-func (r *customerRepo) Create(newCustomer *entity.Customer) (entity.Customer, error) {
+func (c *customerRepo) Create(newCustomer *entity.Customer) (entity.Customer, error) {
 	query := "INSERT INTO m_customer (username, password, email, phone) VALUES ($1, $2, $3, $4) RETURNING id_customer"
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newCustomer.Password), bcrypt.DefaultCost)
@@ -43,9 +40,17 @@ func (r *customerRepo) Create(newCustomer *entity.Customer) (entity.Customer, er
 	}
 
 	var customerID int
-	err = r.db.QueryRow(query, newCustomer.Username, string(hashedPassword), newCustomer.Email, newCustomer.Phone).Scan(&customerID)
+	err = c.db.QueryRow(query, newCustomer.Username, string(hashedPassword), newCustomer.Email, newCustomer.Phone).Scan(&customerID)
 	if err != nil {
 		log.Println(err)
+		return entity.Customer{}, err
+	}
+
+	activity := fmt.Sprintf("create new customer with username %s", newCustomer.Username)
+
+	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
+	_, err = c.db.Exec(query, customerID, activity)
+	if err != nil {
 		return entity.Customer{}, err
 	}
 
@@ -54,9 +59,9 @@ func (r *customerRepo) Create(newCustomer *entity.Customer) (entity.Customer, er
 	return *newCustomer, nil
 }
 
-func (r *customerRepo) Delete(id int) error {
+func (c *customerRepo) Delete(id_customer int) error {
 	query := "DELETE FROM m_customer WHERE id_customer = $1"
-	result, err := r.db.Exec(query, id)
+	result, err := c.db.Exec(query, id_customer)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -70,20 +75,28 @@ func (r *customerRepo) Delete(id int) error {
 	}
 
 	if rowsAffected == 0 {
-		return fmt.Errorf("customer with id %d not found", id)
+		return fmt.Errorf("customer with id %d not found", id_customer)
+	}
+
+	activity := fmt.Sprintf("customer with id %d deleted", id_customer)
+
+	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
+	_, err = c.db.Exec(query, id_customer, activity)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func (r *customerRepo) Login(username, password string) (string, error) {
+func (c *customerRepo) Login(username, password string) (string, error) {
 
 	var err error
 
 	u := entity.CustomerLogin{}
 
 	query := "SELECT id_customer, username, password FROM m_customer WHERE username = $1"
-	row := r.db.QueryRow(query, username)
+	row := c.db.QueryRow(query, username)
 	err = row.Scan(&u.ID_Customer, &u.Username, &u.Password)
 
 	if err != nil {
@@ -102,20 +115,35 @@ func (r *customerRepo) Login(username, password string) (string, error) {
 		return "", err
 	}
 
-	err = r.InsertToken(u.ID_Customer, token)
+	err = c.InsertToken(u.ID_Customer, token)
 
 	if err != nil {
 		return "", err
 	}
 
-	log.Println(113)
+	activity := fmt.Sprintf("customer with id %d logged in", &u.ID_Customer)
+
+	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
+	_, err = c.db.Exec(query, &u.ID_Customer, activity)
+	if err != nil {
+		return "", err
+	}
+
 	return token, nil
 }
 
-func (r *customerRepo) Logout(id int) error {
+func (c *customerRepo) Logout(id_customer int) error {
 
-	err := r.UpdateToken(id)
+	err := c.UpdateToken(id_customer)
 
+	if err != nil {
+		return err
+	}
+
+	activity := fmt.Sprintf("customer with id %d logged out", id_customer)
+
+	query := `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
+	_, err = c.db.Exec(query, id_customer, activity)
 	if err != nil {
 		return err
 	}
@@ -123,9 +151,9 @@ func (r *customerRepo) Logout(id int) error {
 	return nil
 }
 
-func (r *customerRepo) UpdateToken(id int) error {
-	query := "UPDATE m_token SET revoked = $1 WHERE id_customer = $2"
-	result, err := r.db.Exec(query, true, id)
+func (c *customerRepo) UpdateToken(id_customer int) error {
+	query := "UPDATE t_token SET revoked = $1 WHERE id_customer = $2"
+	result, err := c.db.Exec(query, true, id_customer)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -139,15 +167,15 @@ func (r *customerRepo) UpdateToken(id int) error {
 	}
 
 	if rowsAffected == 0 {
-		return fmt.Errorf("token for customer with id %d not found", id)
+		return fmt.Errorf("token for customer with id %d not found", id_customer)
 	}
 
 	return nil
 }
 
-func (r *customerRepo) InsertToken(id int, token string) error {
-	query := "INSERT INTO m_token (id_customer, token, revoked) VALUES ($1, $2, $3)"
-	result, err := r.db.Exec(query, id, token, false)
+func (c *customerRepo) InsertToken(id_customer int, token string) error {
+	query := "INSERT INTO t_token (id_customer, token, revoked) VALUES ($1, $2, $3)"
+	result, err := c.db.Exec(query, id_customer, token, false)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -167,13 +195,19 @@ func (r *customerRepo) InsertToken(id int, token string) error {
 	return nil
 }
 
-func (r *customerRepo) AuthToken(token string) error {
-	var idToken int
-	row := r.db.QueryRow("SELECT id_customer FROM m_token WHERE token = $1 AND revoked = false", token)
-	err := row.Scan(idToken)
+func (c *customerRepo) ValidateToken(id_customer int, token string) error {
+	var tokenString string
+
+	query := "SELECT token FROM t_token WHERE id_customer = $1 AND revoked = false LIMIT 1"
+	row := c.db.QueryRow(query, id_customer)
+	err := row.Scan(&tokenString)
 
 	if err != nil {
 		return err
+	}
+
+	if tokenString != token {
+		return errors.New("invalid token")
 	}
 
 	return nil
