@@ -87,28 +87,24 @@ func (r *customerRepo) Login(username, password string) (string, error) {
 	err = row.Scan(&u.ID_Customer, &u.Username, &u.Password)
 
 	if err != nil {
-		log.Println(88)
 		return "", err
 	}
 
 	err = VerifyPassword(password, u.Password)
 
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-		log.Println(95)
 		return "", err
 	}
 
 	token, err := util.GenerateToken(u.ID_Customer)
 
 	if err != nil {
-		log.Println(102)
 		return "", err
 	}
 
 	err = r.InsertToken(u.ID_Customer, token)
 
 	if err != nil {
-		log.Println(109)
 		return "", err
 	}
 
