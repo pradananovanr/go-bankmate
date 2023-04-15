@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"go-bankmate/model/entity"
+	"log"
 	"time"
 )
 
@@ -27,6 +28,7 @@ func (p *paymentRepo) ValidateToken(id int, token string) error {
 	err := row.Scan(&tokenString)
 
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -40,16 +42,19 @@ func (p *paymentRepo) ValidateToken(id int, token string) error {
 func (p *paymentRepo) CreatePayment(id_customer int, payment *entity.PaymentRequest) (*entity.Payment, error) {
 	tx, err := p.db.Begin()
 	if err != nil {
+		log.Println(err)
 		return &entity.Payment{}, err
 	}
 
 	defer func() {
 		if err != nil {
+			log.Println(err)
 			tx.Rollback()
 			return
 		} else {
 			err = tx.Commit()
 			if err != nil {
+				log.Println(err)
 				tx.Rollback()
 				return
 			}
@@ -63,6 +68,7 @@ func (p *paymentRepo) CreatePayment(id_customer int, payment *entity.PaymentRequ
 	err = row.Scan(&id_merchant)
 
 	if err != nil {
+		log.Println(err)
 		return &entity.Payment{}, err
 	}
 
@@ -73,6 +79,7 @@ func (p *paymentRepo) CreatePayment(id_customer int, payment *entity.PaymentRequ
 	err = row.Scan(&wallet_amount)
 
 	if err != nil {
+		log.Println(err)
 		return &entity.Payment{}, err
 	}
 
@@ -89,6 +96,7 @@ func (p *paymentRepo) CreatePayment(id_customer int, payment *entity.PaymentRequ
 	err = row.Scan(&id_payment, &date_time)
 
 	if err != nil {
+		log.Println(err)
 		return &entity.Payment{}, err
 	}
 
@@ -98,6 +106,7 @@ func (p *paymentRepo) CreatePayment(id_customer int, payment *entity.PaymentRequ
 	_, err = tx.Exec(query, wallet_amount_left, id_customer)
 
 	if err != nil {
+		log.Println(err)
 		return &entity.Payment{}, err
 	}
 
@@ -106,6 +115,7 @@ func (p *paymentRepo) CreatePayment(id_customer int, payment *entity.PaymentRequ
 	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
 	_, err = tx.Exec(query, id_customer, activity)
 	if err != nil {
+		log.Println(err)
 		return &entity.Payment{}, err
 	}
 
@@ -129,6 +139,7 @@ func (p *paymentRepo) GetPayment(id_payment int) (*entity.Payment, error) {
 	err := row.Scan(&payment)
 
 	if err != nil {
+		log.Println(err)
 		return &entity.Payment{}, err
 	}
 
@@ -142,6 +153,7 @@ func (p *paymentRepo) GetAllPayment(id_customer int) ([]*entity.Payment, error) 
 	row, err := p.db.Query(query, id_customer)
 
 	if err != nil {
+		log.Println(err)
 		return []*entity.Payment{}, err
 	}
 

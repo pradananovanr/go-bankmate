@@ -7,6 +7,7 @@ import (
 	"go-bankmate/model/entity"
 	"go-bankmate/usecase"
 	"go-bankmate/util"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -43,6 +44,7 @@ func (c *PaymentController) Create(ctx *gin.Context) {
 
 	id_customer, err := util.ExtractTokenID(ctx)
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusUnauthorized, "", fmt.Errorf("failed to extract token"))
 		return
 	}
@@ -50,6 +52,7 @@ func (c *PaymentController) Create(ctx *gin.Context) {
 	res, err := c.usecase.Create(id_customer, &payment)
 	fmt.Println(err)
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusInternalServerError, "", fmt.Errorf("failed to create payment"))
 		return
 	}
@@ -59,6 +62,7 @@ func (c *PaymentController) Create(ctx *gin.Context) {
 func (c *PaymentController) FindOne(ctx *gin.Context) {
 	paymentId, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusBadRequest, "", fmt.Errorf("id_payment required"))
 		return
 	}
@@ -66,6 +70,7 @@ func (c *PaymentController) FindOne(ctx *gin.Context) {
 	res, err := c.usecase.FindOne(paymentId)
 
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(""))
 		return
 	}
@@ -77,6 +82,7 @@ func (c *PaymentController) FindAll(ctx *gin.Context) {
 	id_customer, err := util.ExtractTokenID(ctx)
 
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusUnauthorized, "", fmt.Errorf("failed to extract token"))
 		return
 	}
@@ -84,6 +90,7 @@ func (c *PaymentController) FindAll(ctx *gin.Context) {
 	res, err := c.usecase.FindAll(id_customer)
 
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(""))
 		return
 	}

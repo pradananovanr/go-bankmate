@@ -39,6 +39,7 @@ func (a *AppServer) Run() {
 		}
 	}()
 	if err != nil {
+		log.Println(err)
 		panic(err)
 	}
 }

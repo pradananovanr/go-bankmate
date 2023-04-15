@@ -36,12 +36,14 @@ func (c *customerRepo) Create(newCustomer *entity.Customer) (entity.Customer, er
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newCustomer.Password), bcrypt.DefaultCost)
 	if err != nil {
+		log.Println(err)
 		return entity.Customer{}, err
 	}
 
 	var customerID int
 	err = c.db.QueryRow(query, newCustomer.Username, string(hashedPassword), newCustomer.Email, newCustomer.Phone).Scan(&customerID)
 	if err != nil {
+		log.Println(err)
 		log.Println(err)
 		return entity.Customer{}, err
 	}
@@ -51,6 +53,7 @@ func (c *customerRepo) Create(newCustomer *entity.Customer) (entity.Customer, er
 	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
 	_, err = c.db.Exec(query, customerID, activity)
 	if err != nil {
+		log.Println(err)
 		return entity.Customer{}, err
 	}
 
@@ -64,12 +67,14 @@ func (c *customerRepo) Delete(id_customer int) error {
 	result, err := c.db.Exec(query, id_customer)
 	if err != nil {
 		log.Println(err)
+		log.Println(err)
 		return err
 	}
 
 	rowsAffected, err := result.RowsAffected()
 
 	if err != nil {
+		log.Println(err)
 		log.Println(err)
 		return err
 	}
@@ -83,6 +88,7 @@ func (c *customerRepo) Delete(id_customer int) error {
 	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
 	_, err = c.db.Exec(query, id_customer, activity)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -100,24 +106,28 @@ func (c *customerRepo) Login(username, password string) (string, error) {
 	err = row.Scan(&u.ID_Customer, &u.Username, &u.Password)
 
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
 	err = VerifyPassword(password, u.Password)
 
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
+		log.Println(err)
 		return "", err
 	}
 
 	token, err := util.GenerateToken(u.ID_Customer)
 
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
 	err = c.InsertToken(u.ID_Customer, token)
 
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
@@ -126,6 +136,7 @@ func (c *customerRepo) Login(username, password string) (string, error) {
 	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
 	_, err = c.db.Exec(query, &u.ID_Customer, activity)
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
@@ -137,6 +148,7 @@ func (c *customerRepo) Logout(id_customer int) error {
 	err := c.UpdateToken(id_customer)
 
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -145,6 +157,7 @@ func (c *customerRepo) Logout(id_customer int) error {
 	query := `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
 	_, err = c.db.Exec(query, id_customer, activity)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -203,6 +216,7 @@ func (c *customerRepo) ValidateToken(id_customer int, token string) error {
 	err := row.Scan(&tokenString)
 
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 

@@ -7,6 +7,7 @@ import (
 	"go-bankmate/model/entity"
 	"go-bankmate/usecase"
 	"go-bankmate/util"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -38,11 +39,13 @@ func NewCustomerController(r *gin.RouterGroup, u usecase.CustomerUsecase) *Custo
 func (c *CustomerController) Remove(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusBadRequest, "X01", app_error.InvalidError("invalid id"))
 		return
 	}
 	err = c.usecase.Remove(id)
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusNotFound, "X04", app_error.DataNotFoundError(fmt.Sprintf("member with id %d not found", id)))
 		return
 	}
@@ -65,6 +68,7 @@ func (c *CustomerController) Add(ctx *gin.Context) {
 
 	res, err := c.usecase.Add(&member)
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusInternalServerError, "", fmt.Errorf("failed to create member"))
 		return
 	}
@@ -83,7 +87,8 @@ func (c *CustomerController) Login(ctx *gin.Context) {
 	token, err := c.usecase.Login(input.Username, input.Password)
 
 	if err != nil {
-		c.Failed(ctx, http.StatusBadRequest, "", app_error.InvalidError("username and/or password is incorrect"))
+		log.Println(err)
+		c.Failed(ctx, http.StatusBadRequest, "", app_error.InvalidError(err.Error()))
 		return
 	}
 
@@ -94,6 +99,7 @@ func (c *CustomerController) Logout(ctx *gin.Context) {
 	ID_Customer, err := util.ExtractTokenID(ctx)
 
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusBadRequest, "", app_error.InvalidError(err.Error()))
 		return
 	}
@@ -101,6 +107,7 @@ func (c *CustomerController) Logout(ctx *gin.Context) {
 	err = c.usecase.Logout(ID_Customer)
 
 	if err != nil {
+		log.Println(err)
 		c.Failed(ctx, http.StatusBadRequest, "", app_error.InvalidError("logout failed"))
 		return
 	}

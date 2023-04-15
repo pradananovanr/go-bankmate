@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +16,7 @@ func GenerateToken(user_id int) (string, error) {
 	token_lifespan, err := strconv.Atoi(DotEnv("TOKEN_HOUR_LIFESPAN"))
 
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
@@ -38,6 +40,7 @@ func TokenValid(c *gin.Context) (string, error) {
 	})
 
 	if err != nil {
+		log.Println(err)
 		return "", err
 	}
 
@@ -70,6 +73,7 @@ func ExtractTokenID(c *gin.Context) (int, error) {
 	})
 
 	if err != nil {
+		log.Println(err)
 		return 0, err
 	}
 
@@ -78,6 +82,7 @@ func ExtractTokenID(c *gin.Context) (int, error) {
 	if ok && token.Valid {
 		uid, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["user_id"]), 10, 32)
 		if err != nil {
+			log.Println(err)
 			return 0, err
 		}
 		return int(uid), nil

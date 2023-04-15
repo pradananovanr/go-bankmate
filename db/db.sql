@@ -39,5 +39,6 @@ CREATE TABLE t_payment (
 
 CREATE TABLE t_log(
     id_log SERIAL PRIMARY KEY,
+    id_customer INT NOT NULL REFERENCES m_customer(id_customer)
     activity VARCHAR(255)
 );
