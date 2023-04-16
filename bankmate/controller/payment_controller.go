@@ -45,11 +45,13 @@ func (c *PaymentController) Create(ctx *gin.Context) {
 	id_customer, err := util.ExtractTokenID(ctx)
 	if err != nil {
 		log.Println(err)
-		c.Failed(ctx, http.StatusUnauthorized, "", fmt.Errorf("failed to extract token"))
+		c.Failed(ctx, http.StatusUnauthorized, "", fmt.Errorf("failed to extract customer id"))
 		return
 	}
 
-	res, err := c.usecase.Create(id_customer, &payment)
+	token := util.ExtractToken(ctx)
+
+	res, err := c.usecase.Create(id_customer, token, &payment)
 	fmt.Println(err)
 	if err != nil {
 		log.Println(err)
@@ -67,7 +69,16 @@ func (c *PaymentController) FindOne(ctx *gin.Context) {
 		return
 	}
 
-	res, err := c.usecase.FindOne(paymentId)
+	id_customer, err := util.ExtractTokenID(ctx)
+	if err != nil {
+		log.Println(err)
+		c.Failed(ctx, http.StatusUnauthorized, "", fmt.Errorf("failed to extract customer id"))
+		return
+	}
+
+	token := util.ExtractToken(ctx)
+
+	res, err := c.usecase.FindOne(id_customer, paymentId, token)
 
 	if err != nil {
 		log.Println(err)
@@ -87,7 +98,9 @@ func (c *PaymentController) FindAll(ctx *gin.Context) {
 		return
 	}
 
-	res, err := c.usecase.FindAll(id_customer)
+	token := util.ExtractToken(ctx)
+
+	res, err := c.usecase.FindAll(id_customer, token)
 
 	if err != nil {
 		log.Println(err)

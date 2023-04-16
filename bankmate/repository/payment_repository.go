@@ -11,9 +11,9 @@ import (
 
 type PaymentRepo interface {
 	ValidateToken(id_customer int, token string) error
-	CreatePayment(id_customer int, payment *entity.PaymentRequest) (*entity.Payment, error)
-	GetPayment(id_payment int) (*entity.Payment, error)
-	GetAllPayment(id_customer int) ([]*entity.Payment, error)
+	CreatePayment(id_customer int, token string, payment *entity.PaymentRequest) (*entity.Payment, error)
+	GetPayment(id_customer, id_payment int, token string) (*entity.Payment, error)
+	GetAllPayment(id_customer int, token string) ([]*entity.Payment, error)
 }
 
 type paymentRepo struct {
@@ -39,7 +39,13 @@ func (p *paymentRepo) ValidateToken(id int, token string) error {
 	return nil
 }
 
-func (p *paymentRepo) CreatePayment(id_customer int, payment *entity.PaymentRequest) (*entity.Payment, error) {
+func (p *paymentRepo) CreatePayment(id_customer int, token string, payment *entity.PaymentRequest) (*entity.Payment, error) {
+	err := p.ValidateToken(id_customer, token)
+
+	if err != nil {
+		return &entity.Payment{}, err
+	}
+
 	tx, err := p.db.Begin()
 	if err != nil {
 		log.Println(err)
@@ -131,13 +137,28 @@ func (p *paymentRepo) CreatePayment(id_customer int, payment *entity.PaymentRequ
 	return response, nil
 }
 
-func (p *paymentRepo) GetPayment(id_payment int) (*entity.Payment, error) {
+func (p *paymentRepo) GetPayment(id_payment, id_customer int, token string) (*entity.Payment, error) {
+	err := p.ValidateToken(id_customer, token)
+
+	if err != nil {
+		return &entity.Payment{}, err
+	}
+
 	var payment entity.Payment
 
 	query := "SELECT * FROM t_payment WHERE id_payment = $1"
 	row := p.db.QueryRow(query, id_payment)
-	err := row.Scan(&payment)
+	err = row.Scan(&payment)
 
+	if err != nil {
+		log.Println(err)
+		return &entity.Payment{}, err
+	}
+
+	activity := fmt.Sprintf("customer with id %d get payment history", id_customer)
+
+	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
+	_, err = p.db.Exec(query, id_customer, activity)
 	if err != nil {
 		log.Println(err)
 		return &entity.Payment{}, err
@@ -146,7 +167,13 @@ func (p *paymentRepo) GetPayment(id_payment int) (*entity.Payment, error) {
 	return &payment, nil
 }
 
-func (p *paymentRepo) GetAllPayment(id_customer int) ([]*entity.Payment, error) {
+func (p *paymentRepo) GetAllPayment(id_customer int, token string) ([]*entity.Payment, error) {
+	err := p.ValidateToken(id_customer, token)
+
+	if err != nil {
+		return []*entity.Payment{}, err
+	}
+
 	var payments []*entity.Payment
 
 	query := "SELECT * FROM t_payment WHERE id_customer = $1"
@@ -166,6 +193,15 @@ func (p *paymentRepo) GetAllPayment(id_customer int) ([]*entity.Payment, error) 
 		payments = append(payments, &payment)
 	}
 	if err := row.Err(); err != nil {
+		return []*entity.Payment{}, err
+	}
+
+	activity := fmt.Sprintf("customer with id %d get all payment history", id_customer)
+
+	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
+	_, err = p.db.Exec(query, id_customer, activity)
+	if err != nil {
+		log.Println(err)
 		return []*entity.Payment{}, err
 	}
 
