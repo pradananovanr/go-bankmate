@@ -20,6 +20,7 @@ func (a *AppServer) ver1() {
 	ver1Routes := a.engine.Group("/ver1")
 	a.customerController(ver1Routes)
 	a.paymentController(ver1Routes)
+	a.depositController(ver1Routes)
 }
 
 func (a *AppServer) customerController(rg *gin.RouterGroup) {
@@ -28,6 +29,10 @@ func (a *AppServer) customerController(rg *gin.RouterGroup) {
 
 func (a *AppServer) paymentController(rg *gin.RouterGroup) {
 	controller.NewPaymentController(rg, a.usecaseManager.PaymentUsecase())
+}
+
+func (a *AppServer) depositController(rg *gin.RouterGroup) {
+	controller.NewDepositController(rg, a.usecaseManager.DepositUsecase())
 }
 
 func (a *AppServer) Run() {

@@ -5,6 +5,7 @@ import "go-bankmate/repository"
 type RepoManager interface {
 	CustomerRepo() repository.CustomerRepo
 	PaymentRepo() repository.PaymentRepo
+	DepositRepo() repository.DepositRepo
 }
 
 type repositoryManager struct {
@@ -17,6 +18,10 @@ func (r *repositoryManager) CustomerRepo() repository.CustomerRepo {
 
 func (r *repositoryManager) PaymentRepo() repository.PaymentRepo {
 	return repository.NewPaymentRepository(r.infraManager.DbConn())
+}
+
+func (r *repositoryManager) DepositRepo() repository.DepositRepo {
+	return repository.NewDepositRepository(r.infraManager.DbConn())
 }
 
 func NewRepoManager(manager InfraManager) RepoManager {
