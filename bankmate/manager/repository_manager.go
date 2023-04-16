@@ -6,6 +6,7 @@ type RepoManager interface {
 	CustomerRepo() repository.CustomerRepo
 	PaymentRepo() repository.PaymentRepo
 	DepositRepo() repository.DepositRepo
+	LogRepo() repository.LogRepo
 }
 
 type repositoryManager struct {
@@ -22,6 +23,10 @@ func (r *repositoryManager) PaymentRepo() repository.PaymentRepo {
 
 func (r *repositoryManager) DepositRepo() repository.DepositRepo {
 	return repository.NewDepositRepository(r.infraManager.DbConn())
+}
+
+func (r *repositoryManager) LogRepo() repository.LogRepo {
+	return repository.NewLogRepository(r.infraManager.DbConn())
 }
 
 func NewRepoManager(manager InfraManager) RepoManager {

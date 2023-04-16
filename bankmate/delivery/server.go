@@ -21,6 +21,7 @@ func (a *AppServer) ver1() {
 	a.customerController(ver1Routes)
 	a.paymentController(ver1Routes)
 	a.depositController(ver1Routes)
+	a.logController(ver1Routes)
 }
 
 func (a *AppServer) customerController(rg *gin.RouterGroup) {
@@ -33,6 +34,10 @@ func (a *AppServer) paymentController(rg *gin.RouterGroup) {
 
 func (a *AppServer) depositController(rg *gin.RouterGroup) {
 	controller.NewDepositController(rg, a.usecaseManager.DepositUsecase())
+}
+
+func (a *AppServer) logController(rg *gin.RouterGroup) {
+	controller.NewLogController(rg, a.usecaseManager.LogUsecase())
 }
 
 func (a *AppServer) Run() {

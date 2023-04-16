@@ -6,6 +6,7 @@ type UsecaseManager interface {
 	CustomerUsecase() usecase.CustomerUsecase
 	PaymentUsecase() usecase.PaymentUsecase
 	DepositUsecase() usecase.DepositUsecase
+	LogUsecase() usecase.LogUsecase
 }
 
 type usecaseManager struct {
@@ -22,6 +23,10 @@ func (u *usecaseManager) PaymentUsecase() usecase.PaymentUsecase {
 
 func (u *usecaseManager) DepositUsecase() usecase.DepositUsecase {
 	return usecase.NewDepositUsecase(u.repoManager.DepositRepo())
+}
+
+func (u *usecaseManager) LogUsecase() usecase.LogUsecase {
+	return usecase.NewLogUsecase(u.repoManager.LogRepo())
 }
 
 func NewUsecaseManager(rm RepoManager) UsecaseManager {
