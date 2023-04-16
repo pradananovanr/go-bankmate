@@ -39,7 +39,7 @@ func (c *DepositController) Add(ctx *gin.Context) {
 	var deposit entity.DepositRequest
 
 	if err := ctx.BindJSON(&deposit); err != nil {
-		c.Failed(ctx, http.StatusBadRequest, "", app_error.UnknownError(""))
+		c.Failed(ctx, http.StatusBadRequest, "", app_error.UnknownError(err.Error()))
 		return
 	}
 
@@ -83,7 +83,7 @@ func (c *DepositController) FindOne(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(""))
+		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(err.Error()))
 		return
 	}
 
@@ -105,7 +105,7 @@ func (c *DepositController) FindAll(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(""))
+		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(err.Error()))
 		return
 	}
 

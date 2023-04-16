@@ -27,7 +27,7 @@ func NewPaymentController(r *gin.RouterGroup, u usecase.PaymentUsecase) *Payment
 	}
 	payGroup := r.Group("/payment")
 	payGroup.Use(middlewares.AuthMiddleware())
-	payGroup.POST("/:id", controller.Create)
+	payGroup.POST("/", controller.Create)
 	payGroup.GET("/:id", controller.FindOne)
 	payGroup.GET("/", controller.FindAll)
 
@@ -38,7 +38,7 @@ func (c *PaymentController) Create(ctx *gin.Context) {
 	var payment entity.PaymentRequest
 
 	if err := ctx.BindJSON(&payment); err != nil {
-		c.Failed(ctx, http.StatusBadRequest, "", app_error.UnknownError(""))
+		c.Failed(ctx, http.StatusBadRequest, "", app_error.UnknownError(err.Error()))
 		return
 	}
 
@@ -82,7 +82,7 @@ func (c *PaymentController) FindOne(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(""))
+		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(err.Error()))
 		return
 	}
 
@@ -104,7 +104,7 @@ func (c *PaymentController) FindAll(ctx *gin.Context) {
 
 	if err != nil {
 		log.Println(err)
-		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(""))
+		c.Failed(ctx, http.StatusInternalServerError, "", app_error.UnknownError(err.Error()))
 		return
 	}
 

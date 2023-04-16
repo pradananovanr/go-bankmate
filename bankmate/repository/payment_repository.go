@@ -108,7 +108,7 @@ func (p *paymentRepo) CreatePayment(id_customer int, token string, payment *enti
 
 	wallet_amount_left := wallet_amount - payment.Payment_Amount
 
-	query = `UPDATE t_payment SET wallet_amount = $1 WHERE id_customer = $2`
+	query = `UPDATE t_wallet SET wallet_amount = $1 WHERE id_customer = $2`
 	_, err = tx.Exec(query, wallet_amount_left, id_customer)
 
 	if err != nil {
@@ -137,7 +137,7 @@ func (p *paymentRepo) CreatePayment(id_customer int, token string, payment *enti
 	return response, nil
 }
 
-func (p *paymentRepo) GetPayment(id_payment, id_customer int, token string) (*entity.Payment, error) {
+func (p *paymentRepo) GetPayment(id_customer, id_payment int, token string) (*entity.Payment, error) {
 	err := p.ValidateToken(id_customer, token)
 
 	if err != nil {
@@ -148,7 +148,7 @@ func (p *paymentRepo) GetPayment(id_payment, id_customer int, token string) (*en
 
 	query := "SELECT * FROM t_payment WHERE id_payment = $1"
 	row := p.db.QueryRow(query, id_payment)
-	err = row.Scan(&payment)
+	err = row.Scan(&payment.ID_Payment, &payment.ID_Customer, &payment.Payment_Code, &payment.Payment_Merchant, &payment.Payment_Amount, &payment.Payment_Description, &payment.Date_Time)
 
 	if err != nil {
 		log.Println(err)
@@ -187,7 +187,7 @@ func (p *paymentRepo) GetAllPayment(id_customer int, token string) ([]*entity.Pa
 	defer row.Close()
 	for row.Next() {
 		var payment entity.Payment
-		if err := row.Scan(&payment.ID_Payment, &payment.Payment_Code, &payment.Payment_Merchant, &payment.Payment_Amount, &payment.Payment_Description, &payment.Date_Time); err != nil {
+		if err := row.Scan(&payment.ID_Payment, &payment.ID_Customer, &payment.Payment_Code, &payment.Payment_Merchant, &payment.Payment_Amount, &payment.Payment_Description, &payment.Date_Time); err != nil {
 			return []*entity.Payment{}, err
 		}
 		payments = append(payments, &payment)

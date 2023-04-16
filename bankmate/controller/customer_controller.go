@@ -57,7 +57,7 @@ func (c *CustomerController) Add(ctx *gin.Context) {
 	var member entity.Customer
 
 	if err := ctx.BindJSON(&member); err != nil {
-		c.Failed(ctx, http.StatusBadRequest, "", app_error.UnknownError(""))
+		c.Failed(ctx, http.StatusBadRequest, "", app_error.UnknownError(err.Error()))
 		return
 	}
 

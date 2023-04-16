@@ -73,10 +73,25 @@ func (d *depositRepo) CreateDeposit(id_customer int, token string, deposit *enti
 		return &entity.Deposit{}, err
 	}
 
-	query = `UPDATE t_wallet SET wallet_amount = wallet_amount + $1 WHERE id_customer = $2`
-	_, err = tx.Exec(query, deposit.Deposit_Amount, id_customer)
+	query = "SELECT COUNT(*) FROM t_wallet WHERE id_customer = $1"
+	var count int
+	err = tx.QueryRow(query, id_customer).Scan(&count)
 	if err != nil {
 		return &entity.Deposit{}, err
+	}
+
+	if count > 0 {
+		query = `UPDATE t_wallet SET wallet_amount = wallet_amount + $1 WHERE id_customer = $2`
+		_, err = tx.Exec(query, deposit.Deposit_Amount, id_customer)
+		if err != nil {
+			return &entity.Deposit{}, err
+		}
+	} else {
+		query = `INSERT INTO t_wallet (id_customer, wallet_amount) VALUES ($1, $2)`
+		_, err = tx.Exec(query, id_customer, deposit.Deposit_Amount)
+		if err != nil {
+			return &entity.Deposit{}, err
+		}
 	}
 
 	activity := fmt.Sprintf("customer with id %d created new deposit", id_customer)
@@ -107,9 +122,9 @@ func (d *depositRepo) GetDeposit(id_customer, id_deposit int, token string) (*en
 
 	var deposit entity.Deposit
 
-	query := "SELECT * FROM t_deposit WHERE id_deposit = $1"
+	query := "SELECT id_deposit, id_customer, deposit_amount, deposit_description, date_time FROM t_deposit WHERE id_deposit = $1"
 	row := d.db.QueryRow(query, id_deposit)
-	err = row.Scan(&deposit)
+	err = row.Scan(&deposit.ID_Deposit, &deposit.ID_Customer, &deposit.Deposit_Amount, &deposit.Deposit_Description, &deposit.Date_Time)
 
 	if err != nil {
 		log.Println(err)
@@ -137,7 +152,7 @@ func (d *depositRepo) GetAllDeposit(id_customer int, token string) ([]*entity.De
 
 	var deposits []*entity.Deposit
 
-	query := "SELECT * FROM t_deposits WHERE id_customer = $1"
+	query := "SELECT * FROM t_deposit WHERE id_customer = $1"
 	row, err := d.db.Query(query, id_customer)
 
 	if err != nil {
@@ -148,7 +163,7 @@ func (d *depositRepo) GetAllDeposit(id_customer int, token string) ([]*entity.De
 	defer row.Close()
 	for row.Next() {
 		var deposit entity.Deposit
-		if err := row.Scan(&deposit.ID_Deposit, &deposit.Deposit_Amount, &deposit.Deposit_Description, &deposit.Date_Time); err != nil {
+		if err := row.Scan(&deposit.ID_Deposit, &deposit.ID_Customer, &deposit.Deposit_Amount, &deposit.Deposit_Description, &deposit.Date_Time); err != nil {
 			return []*entity.Deposit{}, err
 		}
 		deposits = append(deposits, &deposit)
