@@ -155,7 +155,7 @@ func (p *paymentRepo) GetPayment(id_payment, id_customer int, token string) (*en
 		return &entity.Payment{}, err
 	}
 
-	activity := fmt.Sprintf("customer with id %d get payment history", id_customer)
+	activity := fmt.Sprintf("customer with id %d get payment history by id", id_customer)
 
 	query = `INSERT INTO t_log (id_customer, activity) VALUES ($1, $2)`
 	_, err = p.db.Exec(query, id_customer, activity)

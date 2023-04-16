@@ -14,30 +14,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PaymentController struct {
+type DepositController struct {
 	BaseController
 	router  *gin.RouterGroup
-	usecase usecase.PaymentUsecase
+	usecase usecase.DepositUsecase
 }
 
-func NewPaymentController(r *gin.RouterGroup, u usecase.PaymentUsecase) *PaymentController {
-	controller := PaymentController{
+func NewDepositController(r *gin.RouterGroup, u usecase.DepositUsecase) *DepositController {
+	controller := DepositController{
 		router:  r,
 		usecase: u,
 	}
-	payGroup := r.Group("/payment")
-	payGroup.Use(middlewares.AuthMiddleware())
-	payGroup.POST("/:id", controller.Create)
-	payGroup.GET("/:id", controller.FindOne)
-	payGroup.GET("/", controller.FindAll)
+
+	depoGroup := r.Group("/deposit")
+	depoGroup.Use(middlewares.AuthMiddleware())
+	depoGroup.POST("/", controller.Add)
+	depoGroup.GET("/:id", controller.FindOne)
+	depoGroup.GET("/", controller.FindAll)
 
 	return &controller
 }
 
-func (c *PaymentController) Create(ctx *gin.Context) {
-	var payment entity.PaymentRequest
+func (c *DepositController) Add(ctx *gin.Context) {
+	var deposit entity.DepositRequest
 
-	if err := ctx.BindJSON(&payment); err != nil {
+	if err := ctx.BindJSON(&deposit); err != nil {
 		c.Failed(ctx, http.StatusBadRequest, "", app_error.UnknownError(""))
 		return
 	}
@@ -51,21 +52,21 @@ func (c *PaymentController) Create(ctx *gin.Context) {
 
 	token := util.ExtractToken(ctx)
 
-	res, err := c.usecase.Create(id_customer, token, &payment)
+	res, err := c.usecase.Add(id_customer, token, &deposit)
 	fmt.Println(err)
 	if err != nil {
 		log.Println(err)
-		c.Failed(ctx, http.StatusInternalServerError, "", fmt.Errorf("failed to create payment"))
+		c.Failed(ctx, http.StatusInternalServerError, "", fmt.Errorf("failed to create new deposit"))
 		return
 	}
-	c.Success(ctx, http.StatusCreated, "01", "Successfully created new payment", res)
+	c.Success(ctx, http.StatusCreated, "01", "Successfully created new deposit", res)
 }
 
-func (c *PaymentController) FindOne(ctx *gin.Context) {
-	id_payment, err := strconv.Atoi(ctx.Param("id"))
+func (c *DepositController) FindOne(ctx *gin.Context) {
+	id_deposit, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.Failed(ctx, http.StatusBadRequest, "", fmt.Errorf("id_payment required"))
+		c.Failed(ctx, http.StatusBadRequest, "", fmt.Errorf("id_deposit required"))
 		return
 	}
 
@@ -78,7 +79,7 @@ func (c *PaymentController) FindOne(ctx *gin.Context) {
 
 	token := util.ExtractToken(ctx)
 
-	res, err := c.usecase.FindOne(id_customer, id_payment, token)
+	res, err := c.usecase.FindOne(id_customer, id_deposit, token)
 
 	if err != nil {
 		log.Println(err)
@@ -86,10 +87,10 @@ func (c *PaymentController) FindOne(ctx *gin.Context) {
 		return
 	}
 
-	c.Success(ctx, http.StatusOK, "", "get payment data success", res)
+	c.Success(ctx, http.StatusOK, "", "get deposit data success", res)
 }
 
-func (c *PaymentController) FindAll(ctx *gin.Context) {
+func (c *DepositController) FindAll(ctx *gin.Context) {
 	id_customer, err := util.ExtractTokenID(ctx)
 
 	if err != nil {
@@ -108,5 +109,5 @@ func (c *PaymentController) FindAll(ctx *gin.Context) {
 		return
 	}
 
-	c.Success(ctx, http.StatusOK, "", "get all payment data success", res)
+	c.Success(ctx, http.StatusOK, "", "get all deposit data success", res)
 }

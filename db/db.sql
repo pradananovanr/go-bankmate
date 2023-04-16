@@ -28,8 +28,17 @@ CREATE TABLE t_token (
     revoked BOOLEAN DEFAULT false
 );
 
+CREATE TABLE t_deposit (
+    id_deposit SERIAL PRIMARY KEY,
+    id_customer INT NOT NULL REFERENCES m_customer(id_customer), 
+    deposit_amount NUMERIC(18, 2) NOT NULL,
+    deposit_description VARCHAR(255) NOT NULL,
+    date_time TIMESTAMP WITHOUT TIME ZONE DEFAULT 'now()'
+);
+
 CREATE TABLE t_payment (
     id_payment SERIAL PRIMARY KEY,
+    id_customer INT NOT NULL REFERENCES m_customer(id_customer),
     payment_code VARCHAR(255) NOT NULL,
     payment_merchant INT NOT NULL REFERENCES m_merchant(id_merchant),
     payment_amount NUMERIC(18, 2) NOT NULL,
