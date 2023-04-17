@@ -52,3 +52,5 @@ CREATE TABLE t_log(
     activity VARCHAR(255),
     date_time TIMESTAMP WITHOUT TIME ZONE DEFAULT 'now()'
 );
+
+INSERT INTO m_merchant (merchant_name) VALUES ('Tokopaedi');
