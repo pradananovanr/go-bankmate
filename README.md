@@ -1,7 +1,7 @@
 
 # BankMate
 
-A simple API between Customer and Merchant to make payments and deposits.
+A simple API between Customer and Merchant to make payments and deposits. For Merchant Name in this database we use dummy data (From Insert DB) named `Tokopaedi`
 
 ## Requirements
 
