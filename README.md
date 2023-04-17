@@ -22,9 +22,9 @@ A simple API between Customer and Merchant to make payments and deposits. For Me
 
 Before using the API, make sure to set the environment variables in the `.env` file. The following variables are required:
 
- - **DB_HOST** (PostgreSQL host
- - **DB_PORT** (PostgreSQL port
- - **DB_USER** (PostgreSQL username
+ - **DB_HOST** (PostgreSQL host)
+ - **DB_PORT** (PostgreSQL port)
+ - **DB_USER** (PostgreSQL username)
  - **DB_PASSWORD** (PostgreSQL password)
  - **DB_NAME** (PostgreSQL database name)
  - **SSL_MODE** (PostgreSQL SSL mode)
