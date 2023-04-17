@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "2bfb4847-7924-48c2-b27f-87dd552512a6",
+		"name": "go-bankmate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14233701"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"pradanarianto\",\r\n    \"password\" : \"pradana1234\",\r\n    \"email\" : \"pradananovanr@gmail.com\",\r\n    \"phone\" : \"082229593899\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/register",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"pradanarianto\",\r\n    \"password\" : \"pradana1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Deposit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2ODE2NjY3NzcsInVzZXJfaWQiOjN9.Vaa_-oTnQq8vRoxGXapzKVUUlb6uu0bs8mkO8L5ova4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"deposit_amount\" : 1000000,\r\n    \"deposit_description\" : \"Ngutang Mama\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/deposit",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find Deposit by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2ODE2NjY3NzcsInVzZXJfaWQiOjN9.Vaa_-oTnQq8vRoxGXapzKVUUlb6uu0bs8mkO8L5ova4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/deposit/3",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"deposit",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find All Deposit History",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2ODE2NjY3NzcsInVzZXJfaWQiOjN9.Vaa_-oTnQq8vRoxGXapzKVUUlb6uu0bs8mkO8L5ova4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/deposit",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Payment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2ODE2NjY3NzcsInVzZXJfaWQiOjN9.Vaa_-oTnQq8vRoxGXapzKVUUlb6uu0bs8mkO8L5ova4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"payment_code\" : \"PAEDI2022\",\r\n    \"payment_merchant\" : \"Tokopaedi\",\r\n    \"payment_amount\" : 100,\r\n    \"payment_description\" : \"PPh 21\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/payment",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"payment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find Payment by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2ODE2NjY3NzcsInVzZXJfaWQiOjN9.Vaa_-oTnQq8vRoxGXapzKVUUlb6uu0bs8mkO8L5ova4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/payment/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"payment",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find All Payment History",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2ODE2NjY3NzcsInVzZXJfaWQiOjN9.Vaa_-oTnQq8vRoxGXapzKVUUlb6uu0bs8mkO8L5ova4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/payment",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"payment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find All Log History",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2ODE2NjY3NzcsInVzZXJfaWQiOjN9.Vaa_-oTnQq8vRoxGXapzKVUUlb6uu0bs8mkO8L5ova4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/ver1/log",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"log"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2ODE1MzUxMzEsInVzZXJfaWQiOjF9.OY_FMcH5ifaWbxeyKsJzbjMR7Vcz4wDB-EWNe_E53aY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/ver1/logout",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ver1",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
